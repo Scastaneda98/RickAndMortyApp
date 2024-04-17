@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct RickAndMortyAppApp: App {
+    init() {
+        configureURLCache()
+    }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CharactersView()
         }
+    }
+    
+    private func configureURLCache() {
+        let cache = URLCache.shared
+        cache.diskCapacity = 100 * 1024 * 1024
+        cache.memoryCapacity = 100 * 1024 * 1024
     }
 }
