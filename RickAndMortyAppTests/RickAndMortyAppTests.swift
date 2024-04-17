@@ -10,27 +10,53 @@ import XCTest
 
 final class RickAndMortyAppTests: XCTestCase {
 
+    var viewmodel: CharactersViewModel!
+
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        viewmodel = CharactersViewModel()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        viewmodel = nil
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testSuccessCharactersLoad() {
+        let expectation = XCTestExpectation(description: "Characters loaded successfully")
+        
+        viewmodel.characters = Characters(info: Info(count: 12, pages: 1, next: nil, prev: nil), results: [Character(id: 2, name: "Morty Smith", status: .alive, species: "Human", type: "", gender: .male, origin: Location(name: "unknown", url: ""), location: Location(name: "Citadel of Ricks", url: "https://rickandmortyapi.com/api/location/3"), image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg", episode: [], url: "https://rickandmortyapi.com/api/character/2", created: "2017-11-04T18:50:21.651Z"), Character(id: 1, name: "Morty Smith", status: .alive, species: "Human", type: "", gender: .male, origin: Location(name: "unknown", url: ""), location: Location(name: "Citadel of Ricks", url: "https://rickandmortyapi.com/api/location/3"), image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg", episode: [], url: "https://rickandmortyapi.com/api/character/2", created: "2017-11-04T18:50:21.651Z")])
+        viewmodel.isLoading = false
+        
+        XCTAssertEqual(viewmodel.characters?.results.count, 2)
+        XCTAssertFalse(viewmodel.isLoading)
+        
+        expectation.fulfill()
+        wait(for: [expectation], timeout: 1.0)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testEmptyCharacters() {
+        let expectation = XCTestExpectation(description: "Characters empty")
+        
+        viewmodel.characters = Characters(info: Info(count: 12, pages: 1, next: nil, prev: nil), results: [])
+        viewmodel.isLoading = false
+        
+        XCTAssertEqual(viewmodel.characters?.results.count, 0)
+        XCTAssertFalse(viewmodel.isLoading)
+        
+        expectation.fulfill()
+        wait(for: [expectation], timeout: 1.0)
+    }
+    
+    func testDecodingError() {
+        let expectation = XCTestExpectation(description: "Decoding error")
+        
+        viewmodel.errorMessage = "Failed to decode data"
+        viewmodel.isLoading = false
+        
+        XCTAssertEqual(viewmodel.errorMessage, "Failed to decode data")
+        XCTAssertFalse(viewmodel.isLoading)
+        
+        expectation.fulfill()
+        wait(for: [expectation], timeout: 1.0)
     }
 
 }
