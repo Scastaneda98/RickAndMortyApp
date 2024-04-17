@@ -61,9 +61,7 @@ class CharactersViewModel: ObservableObject {
     
     private func getPage(urlPage: String) -> String {
         if let url = URL(string: urlPage) {
-            // Obtén la parte de la consulta de la URL
             if let query = url.query {
-                // Imprime la parte de la consulta
                 return query
             }
         }
